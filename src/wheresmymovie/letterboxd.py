@@ -18,7 +18,6 @@ def fetch_watchlist(username="ravianmh"):
     Returns: 
         A list of dicts, each with the keys: title (str), year (str or None), slug (str)
     """
-
     page_number = 1
     all_movies = []
     headers = {
@@ -31,26 +30,32 @@ def fetch_watchlist(username="ravianmh"):
 
 
         soup = BeautifulSoup(response.text, "html.parser")
+
+        # Each movie poster on the watchlist page is a div like:
+        #   <div data-component-class="LazyPoster"...
+        #        data-item-slug="rocky"...
+        #        data-item-full-display-name="Rocky (1976)"... >
+        # An empty result means we've gone past the last page   
         movies = soup.find_all("div", attrs={"data-component-class": "LazyPoster"})
 
         if not movies:
             break
-        else:
-            for movie in movies:
-                slug = movie["data-item-slug"]
-                movie_and_year = movie["data-item-full-display-name"]
+    
+        for movie in movies:
+            slug = movie["data-item-slug"]
+            movie_and_year = movie["data-item-full-display-name"]
 
-                # Letterboxd's titles look like "Movie title (year)". Extract movie title and year (4 digits at the end) seperatly
-                match = re.search(r"\((\d{4})\)$", movie_and_year)
-                if match:
-                    year = match.group(1)  # the captured 4 digits
-                    title = movie_and_year[:match.start()].strip()  # everything before the match
-                else: 
-                    year = None
-                    title = movie_and_year
+            # Letterboxd's titles look like "Title (year)". Extract title and year (4 digits at the end) seperatly
+            match = re.search(r"\((\d{4})\)$", movie_and_year)
+            if match:
+                year = match.group(1)  # the captured 4 digits
+                title = movie_and_year[:match.start()].strip()  # everything before the match
+            else: 
+                year = None
+                title = movie_and_year
 
-                all_movies.append({"title": title, "year": year, "slug": slug})
-            page_number += 1
+            all_movies.append({"title": title, "year": year, "slug": slug})
+        page_number += 1
         time.sleep(1) # used to not hammer Letterboxd's servers with rapid requests
 
     return all_movies
