@@ -1,5 +1,5 @@
 from wheresmymovie.letterboxd import fetch_watchlist
-from wheresmymovie.tmbd import search_movie
+from wheresmymovie.tmdb import search_movie
 import requests
 import os 
 from dotenv import load_dotenv
