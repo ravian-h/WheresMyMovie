@@ -1,26 +1,21 @@
-from wheresmymovie.letterboxd import fetch_watchlist
-from wheresmymovie.tmdb import search_movie
+import os
+
 import requests
-import os 
 from dotenv import load_dotenv
 
+from wheresmymovie.letterboxd import fetch_watchlist
+from wheresmymovie.tmdb import search_movie
+
 load_dotenv()
-token = os.getenv("TMBD_READ_TOKEN")
-url = "https://api.themoviedb.org/3/movie/movie_id?language=en-US"
+token = os.getenv("TMDB_READ_TOKEN")
+
+# Every request made with this session sends the token, so we only set it once
 s = requests.Session()
-headers = {
-    "accept": "application/json",
-    "Authorization": f"Bearer {token}"
-}
-s.headers.update(headers)
+s.headers.update({"Authorization": f"Bearer {token}"})
 
 movies = fetch_watchlist()
-print(len(movies))
-for movie in movies:
-    print(movie)
+print(f"{len(movies)} movies on watchlist")
 
 for movie in movies:
-    title = movie.get("title")
-    year = movie.get("year")
-    slug = movie.get("slug")
-    movie_id = search_movie(s, slug, year)  
+    movie["tmdb_id"] = search_movie(s, movie["title"], movie["year"])
+    print(f'{movie["title"]} ({movie["year"]}) -> {movie["tmdb_id"]}')

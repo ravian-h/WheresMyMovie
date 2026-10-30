@@ -4,9 +4,6 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-
-
-
 def fetch_watchlist(username="ravianmh"):
     """
     Requests the HTML page of the watchlist of a user (username) from Letterboxd.
@@ -27,7 +24,6 @@ def fetch_watchlist(username="ravianmh"):
     while True:
         url = f"https://letterboxd.com/{username}/watchlist/page/{page_number}/"
         response = requests.get(url, headers=headers)
-
 
         soup = BeautifulSoup(response.text, "html.parser")
 
