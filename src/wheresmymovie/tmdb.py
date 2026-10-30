@@ -1,6 +1,6 @@
 import requests
 
-def search_movie(s: requests.Session, title: str, year: str | None, api_key: str) -> int | None:
+def search_movie(s: requests.Session, title: str, year: str | None) -> int | None:
     """
     Searches TMDB for a movie by its title (and year, if known).
     Passes the search results to pick_best_match to choose the right movie.
@@ -9,7 +9,6 @@ def search_movie(s: requests.Session, title: str, year: str | None, api_key: str
         s: The requests Session used to make the request to TMDB
         title: The title of the movie as shown on Letterboxd
         year: The release year as a 4-digit string, or None if unknown
-        api_key: The TMDB API key, loaded from the .env file
 
     Returns:
         The TMDB ID (int) of the best matching movie, or None if no match was found
@@ -17,7 +16,7 @@ def search_movie(s: requests.Session, title: str, year: str | None, api_key: str
     # requests builds and URL-encodes the query string from this dict,
     # so titles with spaces or special characters (&, ?, é) work as-is.
     # If year is None, requests leaves primary_release_year out of the URL.
-    params={"api_key": api_key, "query": title, "primary_release_year": year}
+    params={"query": title, "primary_release_year": year}
 
     response = s.get(
         "https://api.themoviedb.org/3/search/movie",
