@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from wheresmymovie.letterboxd import fetch_watchlist
 from wheresmymovie.tmdb import search_movie, get_providers
-
+from wheresmymovie.providers import get_films_by_provider
 
 load_dotenv()
 token = os.getenv("TMDB_READ_TOKEN")
@@ -24,4 +24,9 @@ for movie in movies:
     else:
         movie["providers"] = None
     print(f'{movie["title"]} ({movie["year"]}) -> {movie["tmdb_id"]}')
+    print(movie["providers"])
 
+films_by_provider = get_films_by_provider(movies) 
+
+
+    
