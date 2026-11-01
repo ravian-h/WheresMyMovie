@@ -67,17 +67,37 @@ def pick_best_match(data: dict, title: str, year: str | None) -> int | None:
 
 
 def get_providers(s: requests.Session, tmdb_id: int, country: str) -> list[str]:
+    """
+    Requests the watch providers of a movie from TMDB and extracts the names
+    of the streaming platforms (subscription only) available in one country.
 
+    Args:
+        s: The requests Session used to make the request to TMDB
+        tmdb_id: The TMDB ID of the movie
+        country: The two-letter country code, e.g. "NL"
+
+    Returns:
+        A list of provider names (str), e.g. ["Netflix", "Videoland"],
+        or an empty list if the movie isn't streaming in that country
+    """
+    # The movie ID goes in the URL path, so no query params are needed
     response = s.get(
         f"https://api.themoviedb.org/3/movie/{tmdb_id}/watch/providers",
     )
-
+    # Raise an error on a bad response (e.g. 404 for an unknown ID)
     response.raise_for_status()
 
+    # The response looks like:
+    #   {"id": 1366, "results": {"NL": {"flatrate": [{"provider_name": "Netflix", ...}], ...}, ...}}
     data = response.json()
     results = data["results"]
+
+    # Not every movie has providers in every country, so fall back to empty
     country_data = results.get(country, {})
+    # "flatrate" = included in a subscription; "rent" and "buy" are ignored
     list_of_streaming = country_data.get("flatrate", [])
-    names = [platform.get("provider_name") for platform in list_of_streaming]
+
+    # Every provider dict has "provider_name", so a missing key should crash loudly
+    names = [platform["provider_name"] for platform in list_of_streaming]
 
     return names
