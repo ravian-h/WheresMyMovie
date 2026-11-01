@@ -20,7 +20,8 @@ print(f"{len(movies)} movies on watchlist")
 
 for movie in movies:
     movie["tmdb_id"] = search_movie(s, movie["title"], movie["year"])
-    providers = get_providers(s, movie["tmdb_id"], "NL")
+    if movie["tmdb_id"] is not None:
+        providers = get_providers(s, movie["tmdb_id"], "NL")
     print(f'{movie["title"]} ({movie["year"]}) -> {movie["tmdb_id"]}')
     print(providers)
 
