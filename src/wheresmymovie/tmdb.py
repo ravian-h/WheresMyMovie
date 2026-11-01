@@ -78,6 +78,6 @@ def get_providers(s: requests.Session, tmdb_id: int, country: str) -> list[str]:
     results = data["results"]
     country_data = results.get(country, {})
     list_of_streaming = country_data.get("flatrate", [])
-    names = [platform.get("provider_name", []) for platform in list_of_streaming]
+    names = [platform.get("provider_name") for platform in list_of_streaming]
 
     return names

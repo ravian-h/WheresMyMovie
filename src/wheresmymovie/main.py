@@ -4,8 +4,7 @@ import requests
 from dotenv import load_dotenv
 
 from wheresmymovie.letterboxd import fetch_watchlist
-from wheresmymovie.tmdb import search_movie
-from wheresmymovie.tmdb import get_providers
+from wheresmymovie.tmdb import search_movie, get_providers
 
 
 load_dotenv()
@@ -21,7 +20,8 @@ print(f"{len(movies)} movies on watchlist")
 for movie in movies:
     movie["tmdb_id"] = search_movie(s, movie["title"], movie["year"])
     if movie["tmdb_id"] is not None:
-        providers = get_providers(s, movie["tmdb_id"], "NL")
+        movie["providers"] = get_providers(s, movie["tmdb_id"], "NL")
+    else:
+        movie["providers"] = None
     print(f'{movie["title"]} ({movie["year"]}) -> {movie["tmdb_id"]}')
-    print(providers)
 
