@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 from wheresmymovie.letterboxd import fetch_watchlist
 from wheresmymovie.tmdb import search_movie
+from wheresmymovie.tmdb import get_providers
+
 
 load_dotenv()
 token = os.getenv("TMDB_READ_TOKEN")
@@ -18,4 +20,7 @@ print(f"{len(movies)} movies on watchlist")
 
 for movie in movies:
     movie["tmdb_id"] = search_movie(s, movie["title"], movie["year"])
+    providers = get_providers(s, movie["tmdb_id"], "NL")
     print(f'{movie["title"]} ({movie["year"]}) -> {movie["tmdb_id"]}')
+    print(providers)
+

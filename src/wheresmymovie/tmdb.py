@@ -64,3 +64,20 @@ def pick_best_match(data: dict, title: str, year: str | None) -> int | None:
             max_votes = movie["vote_count"]
             max_movie_id = movie["id"]
     return max_movie_id
+
+
+def get_providers(s: requests.Session, tmdb_id: int, country: str) -> list[str]:
+
+    response = s.get(
+        f"https://api.themoviedb.org/3/movie/{tmdb_id}/watch/providers",
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+    results = data["results"]
+    country_data = results.get(country, {})
+    list_of_streaming = country_data.get("flatrate", [])
+    names = [platform.get("provider_name", []) for platform in list_of_streaming]
+
+    return names
